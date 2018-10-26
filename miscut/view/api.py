@@ -29,6 +29,7 @@ class RestFile(View):
                 length = values['length']
                 )
             db.session.add(new)
+            db.session.commit()
         files = []
         for f in VideoFile.query.filter(VideoFile.conference_id==conference.id):
             files.append(f.todict)
