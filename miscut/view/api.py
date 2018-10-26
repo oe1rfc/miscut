@@ -29,11 +29,10 @@ class RestFile(View):
                 length = values['length']
                 )
             db.session.add(new)
-        else:
-            files = []
-            for f in VideoFile.query.filter(VideoFile.conference_id==conference.id):
-                files.append(f.todict)
-            return Response(json.dumps(files), mimetype="application/json")
+        files = []
+        for f in VideoFile.query.filter(VideoFile.conference_id==conference.id):
+            files.append(f.todict)
+        return Response(json.dumps(files), mimetype="application/json")
 
 
 class RestEvents(View):
