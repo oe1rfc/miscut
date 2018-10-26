@@ -38,6 +38,8 @@ class VideoFile(db.Model):
         return {
                 'id': self.id,
                 'type': self.type,
+                'storage_url': self.storage_url,
+                'file_url': self.file_url,
                 'conference': self.conference_id,
                 'startdate': self.startdate,
                 'length': float(self.length),
