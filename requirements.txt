@@ -1,0 +1,14 @@
+Flask>=0.11
+Flask-Admin
+Flask-Login
+Flask-security
+flask-wtf
+wtforms
+flask_sqlalchemy
+flask-migrate
+sqlalchemy
+sqlalchemy_schemadisplay
+psycopg2
+flask-restful
+bcrypt
+requests
