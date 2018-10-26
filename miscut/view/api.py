@@ -21,11 +21,11 @@ class RestFile(View):
         if request.method == 'POST':
             values = request.get_json()
 
-            new = model.VideoFile(
+            new = VideoFile(
                 conference = conference,
-                type = values['footage'],
+                type = values['type'],
                 storage_url =  values['storage_url'],
-                file_url = values['storage_url'],
+                file_url = values['file_url'],
                 length = values['length']
                 )
             db.session.add(new)
