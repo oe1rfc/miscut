@@ -31,7 +31,7 @@ class VideoFile(db.Model):
         return "%s%s" % (self.storage_url, self.file_url)
 
     def __str__(self):
-        return "%s (%s, %s)" % (self.file_url, self.conference.code, self.startdate)
+        return "%s (%s, %s)" % (self.file_url, self.conference.code, self.length)
 
     @property
     def todict(self):
