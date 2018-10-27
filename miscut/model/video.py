@@ -14,7 +14,7 @@ class VideoFile(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     type = db.Column(_video_types, nullable=False, default='footage')
     conference_id = db.Column(db.Integer(), db.ForeignKey(Conference.id, ondelete="CASCADE"), nullable=False)
-    conference = db.relationship(Conference, backref='files')
+    conference = db.relationship(Conference, foreign_keys=conference_id, backref='files')
     active = db.Column(db.Boolean(), nullable=False, default=True)
     deleted = db.Column(db.Boolean(), nullable=False, default=False)
     startdate = db.Column(db.DateTime(), default=datetime.utcnow, nullable=True)
@@ -48,10 +48,10 @@ class VideoFile(db.Model):
 
 class VideoSegment(db.Model):
     event_id = db.Column(db.Integer(), db.ForeignKey(Event.id, ondelete="CASCADE"), nullable=False, primary_key=True)
-    event = db.relationship(Event, backref='all_segments')
+    event = db.relationship(Event, foreign_keys=event_id, backref='all_segments')
 
     videofile_id = db.Column(db.Integer(), db.ForeignKey(VideoFile.id, ondelete="CASCADE"), nullable=False)
-    videofile = db.relationship(VideoFile, backref='all_segments')
+    videofile = db.relationship(VideoFile, foreign_keys=videofile_id, backref='all_segments')
 
     segment_id = db.Column(db.Integer, primary_key=True, nullable=True)
     version = db.Column(db.Integer, primary_key=True, default=0)
