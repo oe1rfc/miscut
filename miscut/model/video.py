@@ -60,7 +60,7 @@ class VideoSegment(db.Model):
     length = db.Column(db.Numeric(precision=10, scale=2, decimal_return_scale=2), nullable=False)
     assigned = db.Column(db.Boolean(), nullable=False, default=False)
 
-    transition = db.Column(_transition_types)
+    transition = db.Column(_transition_types, default="cut")
     transition_length = db.Column(db.Numeric(precision=10, scale=2, decimal_return_scale=2), default=None)
 
     created_at = db.Column(db.DateTime(), default=datetime.utcnow)
@@ -69,20 +69,6 @@ class VideoSegment(db.Model):
     def __str__(self):
         return "%s Segment %d" % (self.event, self.segment_id)
 
-    @validates('videofile_id', 'videofile', 'transition', 'transition_length')
-    def validate_transition(self, key, value):
-        print("K: %s    V:%s" % (key, value))
-        if key == 'transition' and value is None:
-            if self.videofile.type in ('intro', 'outro'):
-                return 'crossfade'
-            else:
-                return 'cut'
-        if key == 'transition_length':
-            if self.transition is 'cut':
-                return None
-            if value is None and self.videofile.type in ('intro', 'outro'):
-                return 1.00
-        return value
 
     @property
     def todict(self):
