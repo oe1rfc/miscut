@@ -69,7 +69,7 @@ class VideoSegment(db.Model):
     def __str__(self):
         return "%s Segment %d" % (self.event, self.segment_id)
 
-    @validates('videofile', 'transition', 'transition_length')
+    @validates('videofile_id', 'videofile', 'transition', 'transition_length')
     def validate_transition(self, key, value):
         print("K: %s    V:%s" % (key, value))
         if key == 'transition' and value is None:
