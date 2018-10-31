@@ -273,7 +273,7 @@ cutter = new Vue({
             player.options.markers = [segment.start, (segment.start + segment.length)];
             player.setmarkers(player.controls);
             if (updatesrc) {
-                player.setSrc(segment.videofile.url);
+                player.setSrc(segment.videofile.proxy_url);
                 player.setCurrentTime(segment.start);
                 player.load();
             }
