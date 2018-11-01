@@ -33,6 +33,7 @@ class Event(db.Model):
     record = db.Column(db.Boolean(), nullable=False, default=True)
     date = db.Column(db.DateTime(), default=None)
     duration = db.Column(db.Integer, default=0)
+    rendered_url = db.Column(db.Unicode(512), default=None)
 
     created_at = db.Column(db.DateTime(), default=datetime.utcnow)
     description_updated = db.Column(db.DateTime(), default=datetime.utcnow)
@@ -46,7 +47,7 @@ class Event(db.Model):
     @property
     def segments(self):
         from .video import VideoSegment
-        for segment in VideoSegment.query.filter_by(version=self.version):
+        for segment in VideoSegment.query.filter_by(event_id=self.id, version=self.version):
             yield segment
 
     @property

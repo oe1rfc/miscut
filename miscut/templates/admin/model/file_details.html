@@ -1,0 +1,35 @@
+{% extends 'admin/model/details.html' %}
+
+
+{% block navlinks %}
+    {{ super() }}
+    <div class="input-group fa_filter_container col-lg-8">
+        <video  style="max-width: 100%;" controls="controls" width="640" height="360" id='mediaplayer' controls="controls" preload="none" >
+            <source type="video/mp4" src=" {{ get_value(model, 'proxy_url') }}" />
+        </video>
+    </div>
+{% endblock %}
+
+{% block tail %}
+  {{ super() }}
+    <script src="{{ url_for('static', filename='lib/jquery/jquery-3.3.1.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/mediaelement/build/mediaelement-and-player.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='lib/mediaelement/build/mediaelementplayer.min.css') }}" />
+    <script src="{{ url_for('static', filename='lib/mediaelement-plugins/dist/markers/markers.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/mediaelement-plugins/dist/speed/speed.min.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='lib/mediaelement-plugins/dist/speed/speed.min.css') }}" />
+    <script src="{{ url_for('static', filename='lib/mediaelement-plugins/dist/jump-forward/jump-forward.min.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='lib/mediaelement-plugins/dist/jump-forward/jump-forward.min.css') }}" />
+    <script src="{{ url_for('static', filename='lib/mediaelement-plugins/dist/skip-back/skip-back.min.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='lib/mediaelement-plugins/dist/skip-back/skip-back.min.css') }}" />
+    <script>
+    $('#mediaplayer').mediaelementplayer({
+        pluginPath: "{{ url_for('static', filename='lib/mediaelement-plugins/dist/') }}",
+        features: ['playpause', 'current', 'progress', 'duration', 'skipback', 'jumpforward', 'tracks', 'speed', 'volume'],
+        alwaysShowControls: true,
+        speeds: ['10.0', '5.00', '2.50', '1.00', '0.50'],
+        autoplay: false,
+        controls: true,
+    });
+    </script>
+{% endblock %}

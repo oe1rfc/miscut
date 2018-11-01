@@ -49,7 +49,8 @@ def sampledata():
         conference = conference,
         event_id = 1,
         state = 'cutting',
-        name = "Test Event"
+        name = "Test Event",
+        room = "room1"
         ))
 
     files = []

@@ -43,5 +43,5 @@ class SystemView(LoginView):
             return True
         return super(SystemView, self).is_accessible()
 
-from .admin import AdminSegmentView
+from .admin import AdminSegmentView, AdminFileView
 from .video import EventCutView

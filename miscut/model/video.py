@@ -34,10 +34,6 @@ class VideoFile(db.Model):
     def proxy_url(self):
         return "%sproxy/%s.mp4" % (self.storage_url, self.file_url)
 
-    @property
-    def render_url(self):
-        return "%srender/%s.mp4" % (self.storage_url, self.file_url)
-
     def __str__(self):
         return "%s (%s, %s)" % (self.file_url, self.conference.code, self.length)
 
@@ -52,8 +48,7 @@ class VideoFile(db.Model):
                 'startdate': self.startdate,
                 'length': float(self.length),
                 'url': self.url,
-                'proxy_url': self.proxy_url,
-                'render_url': self.render_url
+                'proxy_url': self.proxy_url
                 }
 
 class VideoSegment(db.Model):
