@@ -11,7 +11,6 @@ _video_types = db.Enum('footage', 'intro', 'outro', name='video_types')
 _transition_types = db.Enum('cut', 'crossfade', name='transition_types')
 
 class VideoFile(db.Model):
-    __table_args__ = tuple(UniqueConstraint('storage_url', 'file_url', name='file_uniqe'))
     id = db.Column(db.Integer, primary_key=True)
     type = db.Column(_video_types, nullable=False, default='footage')
     conference_id = db.Column(db.Integer(), db.ForeignKey(Conference.id, ondelete="CASCADE"), nullable=False)
@@ -26,6 +25,8 @@ class VideoFile(db.Model):
 
     created_at = db.Column(db.DateTime(), default=datetime.utcnow)
     changed_at = db.Column(db.DateTime(), onupdate=datetime.utcnow)
+
+    __table_args__ = (UniqueConstraint('storage_url', 'file_url', name='file_uniqe'), )
 
     @property
     def url(self):

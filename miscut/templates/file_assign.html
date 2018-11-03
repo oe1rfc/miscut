@@ -12,8 +12,12 @@
 {% endblock %}
 
 
+{% macro extrabtn() %}
+  <input name="_set_inactive" type="submit" class="btn btn-warning" value="Disable (no events)" />
+{% endmacro %}
+
 {% block edit_form %}
-    {{ lib.render_form(form, return_url, None, form_opts) }}
+    {{ lib.render_form(form, return_url, extrabtn(), form_opts) }}
 {% endblock %}
 
 {% block tail %}

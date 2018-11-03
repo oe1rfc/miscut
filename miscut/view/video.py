@@ -155,21 +155,24 @@ class FileAssignView(LoginView):
             return redirect(self.get_url('.index_view'))
 
     def update_model(self, form, model):
-        segments = []
-        for eid in request.form['assign_events'].split(','):
-            event = Event.query.filter_by(id=eid).first()
-            if event and event.conference_id is model.conference_id and event.state in ('stub', 'cutting'):
-                segments.append(VideoSegment(
-                    event = event,
-                    version = event.version,
-                    segment_id = len(list(event.segments)) + 1,
-                    videofile = model,
-                    start = 0,
-                    length = model.length
+        if '_set_inactive' in request.form:
+            model.active = False
+        else:
+            segments = []
+            for eid in request.form['assign_events'].split(','):
+                event = Event.query.filter_by(id=eid).first()
+                if event and event.conference_id is model.conference_id and event.state in ('stub', 'cutting'):
+                    segments.append(VideoSegment(
+                        event = event,
+                        version = event.version,
+                        segment_id = len(list(event.segments)) + 1,
+                        videofile = model,
+                        start = 0,
+                        length = model.length
+                        )
                     )
-                )
-        for s in segments:
-            db.session.add(s)
+            for s in segments:
+                db.session.add(s)
         db.session.commit()
 
 
