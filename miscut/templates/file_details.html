@@ -5,7 +5,7 @@
     {{ super() }}
     <div class="input-group fa_filter_container col-lg-8">
         <video  style="max-width: 100%;" controls="controls" width="640" height="360" id='mediaplayer' controls="controls" preload="none" >
-            <source type="video/mp4" src=" {{ get_value(model, 'proxy_url') }}" />
+            <source type="video/mp4" src="{{ get_value(model, 'proxy_url') }}" />
         </video>
     </div>
 {% endblock %}

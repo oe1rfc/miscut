@@ -9,4 +9,4 @@ class AdminSegmentView(AdminView):
 class AdminFileView(AdminView):
     can_view_details = True
     column_searchable_list = ('conference.name', 'storage_url', 'file_url')
-    details_template = 'admin/model/file_details.html'
+    details_template = 'file_details.html'

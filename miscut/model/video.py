@@ -1,6 +1,7 @@
 
 from sqlalchemy.orm import validates
 from sqlalchemy import UniqueConstraint
+from sqlalchemy import event
 from datetime import datetime, date
 
 from ..model import db
@@ -88,3 +89,40 @@ class VideoSegment(db.Model):
                 'transition_length': float(self.transition_length) if self.transition_length else None,
             }
 
+@event.listens_for(VideoSegment, 'before_insert')
+def segment_set_default_transition(mapper, connection, target):
+    if target.transition is None:
+        if target.videofile.type is 'footage':
+            target.transition = 'cut'
+            target.transition_length = None
+        else:
+            target.transition = 'crossfade'
+            target.transition_length = 1
+
+@event.listens_for(VideoSegment, 'after_insert')
+def update_event_state_cutting(mapper, connection, segment):
+    if not segment.event.state in ('stub', 'cutting'):
+        return
+    has_intro = False
+    has_footage = False
+    has_outro = False
+    all_assigned = True
+    for s in segment.event.segments:
+        if not s.assigned:
+            all_assigned = False
+        if s.videofile.type == 'intro':
+            has_intro = True
+        if s.videofile.type == 'footage':
+            has_footage = True
+        if s.videofile.type == 'outro':
+            has_outro = True
+    if has_intro and has_outro and has_footage:
+        if not all_assigned:
+            state = 'cutting'
+        else:
+            state = 'rendering'
+        connection.execute(
+                Event.__table__.update().
+                    where(Event.id==segment.event.id).
+                    values(state=state)
+        )

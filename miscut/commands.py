@@ -48,8 +48,16 @@ def sampledata():
     events.append(model.Event(
         conference = conference,
         event_id = 1,
-        state = 'cutting',
-        name = "Test Event",
+        state = 'stub',
+        name = "Test Event 1",
+        room = "room1"
+        ))
+
+    events.append(model.Event(
+        conference = conference,
+        event_id = 1,
+        state = 'stub',
+        name = "Test Event 2",
         room = "room1"
         ))
 
@@ -81,30 +89,21 @@ def sampledata():
         videofile = files[0],
         segment_id = 0,
         start = 0,
-        length = 8.05,
-        assigned = False,
-        transition = None,
-        transition_length = None
+        length = 8.05
         ))
     segments.append(model.VideoSegment(
         event =events[0],
         videofile = files[2],
         segment_id = 1,
         start = 10,
-        length = 2200,
-        assigned = False,
-        transition = None,
-        transition_length = None
+        length = 2200
         ))
     segments.append(model.VideoSegment(
         event =events[0],
         videofile = files[1],
         segment_id = 2,
         start = 0,
-        length = 5.02,
-        assigned = False,
-        transition = None,
-        transition_length = None
+        length = 5.02
         ))
 
     db.session.add(conference)

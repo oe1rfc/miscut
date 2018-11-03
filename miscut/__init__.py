@@ -54,9 +54,10 @@ def security_context_processor():
     )
 
 admin.add_view(view.EventCutView(model.Event, db.session, name='Uncut Events', category='Cutter', endpoint="cutter"))
+admin.add_view(view.FileAssignView(model.VideoFile, db.session, name='Unassigned Files', category='Cutter', endpoint="assignfiles"))
 
-admin.add_view(view.AdminView(model.Conference, db.session, category='Events', endpoint="conferences"))
 admin.add_view(view.AdminView(model.Event, db.session, category='Events', endpoint="events"))
+admin.add_view(view.AdminView(model.Conference, db.session, category='Events', endpoint="conferences"))
 
 admin.add_view(view.AdminFileView(model.VideoFile, db.session, category='Files', endpoint="files"))
 admin.add_view(view.AdminSegmentView(model.VideoSegment, db.session, category='Files', endpoint="segments"))

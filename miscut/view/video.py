@@ -8,8 +8,12 @@ from flask_admin.babel import gettext
 from sqlalchemy.sql.expression import func
 from flask_admin.model.helpers import get_mdict_item_or_list
 
+from wtforms import Form
+from flask_admin.contrib.sqla.ajax import QueryAjaxModelLoader
+from flask_admin.model.fields import AjaxSelectField, AjaxSelectMultipleField
+
 from ..view import LoginView
-from ..model import db, VideoFile, VideoSegment
+from ..model import db, VideoFile, VideoSegment, Event
 
 
 class EventCutView(LoginView):
@@ -73,16 +77,10 @@ class EventCutView(LoginView):
 
         if request.method == 'POST':
             saved = request.get_json()
-            print(saved)
             newversion = (event.version + 1)
-            print("new version:", newversion)
             segments = []
             for s in saved:
-                print()
-                print (s)
                 videofile=VideoFile.query.filter_by(id=int(s['videofile_id'])).first()
-                print("file", videofile)
-                print()
                 segments.append(VideoSegment(
                     segment_id = int(s['segment_id'])+1,
                     event = event,
@@ -94,7 +92,6 @@ class EventCutView(LoginView):
                     transition_length = s['transition_length'] if 'transition_length' in s else None,
                     version = newversion,
                 ))
-                print(segments)
             event.version = newversion
             for s in segments:
                 db.session.add(s)
@@ -122,3 +119,88 @@ class EventCutView(LoginView):
         return Response(json.dumps(files), mimetype="application/json")
 
 
+
+
+
+class FileAssignView(LoginView):
+    can_delete = False
+    can_create = False
+    can_view_details = False
+    edit_template = 'file_assign.html'
+
+    def create_view(self):
+        pass
+    def delete_view(self):
+        pass
+    def ajax_update(self):
+        pass
+
+    def get_query(self):
+        return super(FileAssignView, self).get_query().outerjoin(VideoSegment).filter(self.model.deleted == False,
+                                                                                      self.model.active == True,
+                                                                                      VideoSegment.event_id == None)
+
+    def get_count_query(self):
+        return self.session.query(func.count(self.model.id)).outerjoin(VideoSegment).filter(self.model.deleted == False,
+                                                                                      self.model.active == True,
+                                                                                      VideoSegment.event_id == None)
+
+
+    @expose('/edit/', methods=('GET', 'POST'))
+    def edit_view(self):
+        if request.method == 'GET':
+            return super(FileAssignView, self).edit_view()
+        else:
+            super(FileAssignView, self).edit_view()
+            return redirect(self.get_url('.index_view'))
+
+    def update_model(self, form, model):
+        segments = []
+        for eid in request.form['assign_events'].split(','):
+            event = Event.query.filter_by(id=eid).first()
+            if event and event.conference_id is model.conference_id and event.state in ('stub', 'cutting'):
+                segments.append(VideoSegment(
+                    event = event,
+                    version = event.version,
+                    segment_id = len(list(event.segments)) + 1,
+                    videofile = model,
+                    start = 0,
+                    length = model.length
+                    )
+                )
+        for s in segments:
+            db.session.add(s)
+        db.session.commit()
+
+
+    class FileAssignForm(Form):
+        assign_events = AjaxSelectMultipleField(loader=None)
+
+    def get_event_loader(self, conference_id):
+        return QueryAjaxModelLoader(
+            conference_id,
+            db.session, Event,
+            fields=['name', 'personnames'],
+            page_size=10,
+            placeholder="Search for Events",
+            filters = (Event.conference_id == conference_id)
+        )
+
+    def edit_form(self, obj=None):
+        form = self.FileAssignForm()
+        form.assign_events.loader = self.get_event_loader(obj.conference_id)
+        return form
+
+    @expose('/ajax/lookup/')
+    def ajax_lookup(self):
+        conference_id = request.args.get('name', type=int)
+        query = request.args.get('query')
+        offset = request.args.get('offset', type=int)
+        limit = request.args.get('limit', 10, type=int)
+
+        loader = self.get_event_loader(conference_id)
+        if not loader:
+            abort(404)
+
+        data = [loader.format(m) for m in loader.get_list(query, offset, limit)]
+        return Response(json.dumps(data), mimetype='application/json')

@@ -74,7 +74,7 @@
                 </div>
             </p>
         </div>
-        <div role="tabpanel"  id="preview" class="col-sm-8 tab-pane active">
+        <div role="tabpanel"  id="preview" class="col-sm-8 tab-pane">
             <canvas id="video-canvas" style="background-color: #f5f5f5; width: 100%"></canvas>
                 <canvas id="visualisation-canvas" height="20" style="background-color: #f5f5f5; width: 100%"></canvas>
             <p>
@@ -95,7 +95,7 @@
             </div>-->
         </div>
 
-        <div role="tabpanel"  id="debug" class="col-sm-8 tab-pane active">
+        <div role="tabpanel"  id="debug" class="col-sm-8 tab-pane">
 {% endraw %}
 <pre>
 database segments:
@@ -227,7 +227,7 @@ cutter = new Vue({
                 contentType:"application/json; charset=utf-8",
                 dataType:"json",
                 success: function(data) {
-                    alert(data);
+                    window.location = "{{ get_url('.index_view') }}"
                 },
             });
         },
