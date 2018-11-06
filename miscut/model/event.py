@@ -1,5 +1,6 @@
 
 from sqlalchemy.orm import validates
+from sqlalchemy import UniqueConstraint
 from datetime import datetime, date
 
 from ..model import db
@@ -40,6 +41,8 @@ class Event(db.Model):
     changed_at = db.Column(db.DateTime(), onupdate=datetime.utcnow)
     version = db.Column(db.Integer, default=0)
     comment = db.Column(db.UnicodeText, default="")
+
+    __table_args__ = (UniqueConstraint('conference_id', 'event_id', name='conference_event_uniqe'), )
 
     def __str__(self):
         return "%s/%s (%s)" % (self.conference.code, self.event_id, self.name)

@@ -8,7 +8,7 @@ from flask_admin.babel import gettext
 from sqlalchemy.sql.expression import func
 from flask_admin.model.helpers import get_mdict_item_or_list
 
-from wtforms import Form
+from wtforms import Form, StringField
 from flask_admin.contrib.sqla.ajax import QueryAjaxModelLoader
 from flask_admin.model.fields import AjaxSelectField, AjaxSelectMultipleField
 
@@ -20,6 +20,7 @@ class EventCutView(LoginView):
     can_delete = False
     can_create = False
     can_view_details = False
+    column_exclude_list = ('subtitle', 'duration', 'rendered_url', 'created_at', 'description_updated', 'changed_at')
 
     def create_view(self):
         pass
@@ -93,6 +94,7 @@ class EventCutView(LoginView):
                     version = newversion,
                 ))
             event.version = newversion
+            event.state = 'rendering'
             for s in segments:
                 db.session.add(s)
             db.session.commit()
@@ -119,6 +121,53 @@ class EventCutView(LoginView):
         return Response(json.dumps(files), mimetype="application/json")
 
 
+class EventReleaseView(LoginView):
+    can_delete = False
+    can_create = False
+    can_view_details = False
+    edit_template = 'event_release.html'
+    column_exclude_list = ('subtitle', 'duration', 'rendered_url', 'created_at', 'description_updated', 'changed_at')
+
+    def create_view(self):
+        pass
+    def delete_view(self):
+        pass
+    def ajax_update(self):
+        pass
+
+    def get_query(self):
+        return super(EventReleaseView, self).get_query().filter(self.model.state == 'checking',
+                                                                                                self.model.active == True,
+                                                                                                self.model.rendered_url != None)
+
+    def get_count_query(self):
+        return self.session.query(func.count('*')).filter(self.model.state == 'checking',
+                                                                                    self.model.active == True,
+                                                                                    self.model.rendered_url != None)
+
+    @expose('/edit/', methods=('GET', 'POST'))
+    def edit_view(self):
+        if request.method == 'GET':
+            return super(EventReleaseView, self).edit_view()
+        else:
+            super(EventReleaseView, self).edit_view()
+            return redirect(self.get_url('.index_view'))
+
+    class FileReleaseForm(Form):
+        comment = StringField('File Comment')
+
+    def edit_form(self, obj=None):
+        return self.FileReleaseForm(data={'comment': obj.comment})
+
+    def update_model(self, form, model):
+        print(request.form)
+        if 'comment' in request.form:
+            model.comment = request.form['comment']
+        if '_set_recut' in request.form:
+            model.state = 'cutting'
+        elif model.record is True:
+            model.state = 'published'
+        db.session.commit()
 
 
 
@@ -127,6 +176,8 @@ class FileAssignView(LoginView):
     can_create = False
     can_view_details = False
     edit_template = 'file_assign.html'
+
+    column_exclude_list = ('startdate', 'storage_url', 'created_at', 'changed_at')
 
     def create_view(self):
         pass
@@ -145,7 +196,6 @@ class FileAssignView(LoginView):
                                                                                       self.model.active == True,
                                                                                       VideoSegment.event_id == None)
 
-
     @expose('/edit/', methods=('GET', 'POST'))
     def edit_view(self):
         if request.method == 'GET':
@@ -155,6 +205,8 @@ class FileAssignView(LoginView):
             return redirect(self.get_url('.index_view'))
 
     def update_model(self, form, model):
+        if 'comment' in request.form:
+            model.comment = request.form['comment']
         if '_set_inactive' in request.form:
             model.active = False
         else:
@@ -178,6 +230,7 @@ class FileAssignView(LoginView):
 
     class FileAssignForm(Form):
         assign_events = AjaxSelectMultipleField(loader=None)
+        comment = StringField('File Comment')
 
     def get_event_loader(self, conference_id):
         return QueryAjaxModelLoader(
@@ -190,7 +243,7 @@ class FileAssignView(LoginView):
         )
 
     def edit_form(self, obj=None):
-        form = self.FileAssignForm()
+        form = self.FileAssignForm(data={'comment': obj.comment})
         form.assign_events.loader = self.get_event_loader(obj.conference_id)
         return form
 

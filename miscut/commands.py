@@ -55,7 +55,7 @@ def sampledata():
 
     events.append(model.Event(
         conference = conference,
-        event_id = 1,
+        event_id = 2,
         state = 'stub',
         name = "Test Event 2",
         room = "room1"
