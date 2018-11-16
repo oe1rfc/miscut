@@ -29,8 +29,8 @@ class AdminView(LoginView):
             return False
 
         if current_user.has_role('admin'):
-            return True
-        return super(AdminView, self).is_accessible()
+            return super(AdminView, self).is_accessible()
+        return False
 
 class SystemView(LoginView):
     form_base_class = SecureForm
@@ -44,4 +44,4 @@ class SystemView(LoginView):
         return super(SystemView, self).is_accessible()
 
 from .admin import AdminSegmentView, AdminFileView, AdminEventView
-from .video import EventCutView, FileAssignView, EventReleaseView
+from .video import EventCutView, FileAssignView, EventReleaseView, EventOverView

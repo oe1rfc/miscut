@@ -21,6 +21,7 @@ class EventCutView(LoginView):
     can_create = False
     can_view_details = False
     column_exclude_list = ('subtitle', 'duration', 'rendered_url', 'created_at', 'description_updated', 'changed_at')
+    column_searchable_list = ('conference.name', 'event_id', 'name', 'subtitle', 'personnames', 'comment')
 
     def create_view(self):
         pass
@@ -127,6 +128,7 @@ class EventReleaseView(LoginView):
     can_view_details = False
     edit_template = 'event_release.html'
     column_exclude_list = ('subtitle', 'duration', 'rendered_url', 'created_at', 'description_updated', 'changed_at')
+    column_searchable_list = ('conference.name', 'event_id', 'name', 'subtitle', 'personnames', 'comment')
 
     def create_view(self):
         pass
@@ -178,6 +180,7 @@ class FileAssignView(LoginView):
     edit_template = 'file_assign.html'
 
     column_exclude_list = ('startdate', 'storage_url', 'created_at', 'changed_at')
+    column_searchable_list = ('conference.name', 'conference.code', 'file_url', 'comment')
 
     def create_view(self):
         pass
@@ -260,3 +263,29 @@ class FileAssignView(LoginView):
 
         data = [loader.format(m) for m in loader.get_list(query, offset, limit)]
         return Response(json.dumps(data), mimetype='application/json')
+
+
+class EventOverView(LoginView):
+    can_delete = False
+    can_create = False
+    can_edit = False
+    can_view_details = False
+    column_exclude_list = ('subtitle', 'duration', 'rendered_url', 'created_at', 'description_updated', 'changed_at')
+    column_searchable_list = ('conference.name', 'event_id', 'name', 'subtitle', 'personnames', 'comment')
+    column_filters = ('conference.code', 'state', 'room', 'record')
+    column_default_sort = ('changed_at', True)
+
+    def create_view(self):
+        pass
+    def delete_view(self):
+        pass
+    def edit_view(self):
+        pass
+    def ajax_update(self):
+        pass
+
+    def get_query(self):
+        return super(EventOverView, self).get_query().filter(self.model.active == True)
+
+    def get_count_query(self):
+        return self.session.query(func.count('*')).filter(self.model.active == True)

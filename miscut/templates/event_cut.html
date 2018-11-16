@@ -15,7 +15,6 @@
 <script src="{{ url_for('static', filename='lib/VideoContext/docs/dist/videocontext.js') }}"></script>
 <script src="{{ url_for('static', filename='lib/VideoContext/docs/js/utils.js') }}"></script>
 <script src="{{ url_for('static', filename='lib/vue/dist/vue.js') }}"></script>
-<script src="{{ url_for('static', filename='lib/vue-shortkey/dist/index.js') }}"></script>
 <!--<script src="{{ url_for('static', filename='js/event_cut.js') }}"></script> -->
 <style>
 </style>
@@ -207,7 +206,7 @@ cutter = new Vue({
         },
         active_segment: function (newval, oldval) {
             if(newval != null) {
-                this.mediaplayerUpdate(newval, oldval==null);
+                this.mediaplayerUpdate(newval, oldval != newval);
             }
         },
     },
