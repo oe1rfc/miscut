@@ -53,10 +53,10 @@ def security_context_processor():
         get_url=url_for
     )
 
-admin.add_view(view.EventOverView(model.Event, db.session, name='Events Overview', category='Cutter', endpoint="overview"))
-admin.add_view(view.FileAssignView(model.VideoFile, db.session, name='Assign Files', category='Cutter', endpoint="assignfiles"))
-admin.add_view(view.EventCutView(model.Event, db.session, name='Cut Events', category='Cutter', endpoint="cutter"))
-admin.add_view(view.EventReleaseView(model.Event, db.session, name='Release Events', category='Cutter', endpoint="release"))
+admin.add_view(view.EventOverView(model.Event, db.session, name='Status', endpoint="status"))
+admin.add_view(view.FileAssignView(model.VideoFile, db.session, name='Assign Files', endpoint="assignfiles"))
+admin.add_view(view.EventCutView(model.Event, db.session, name='Cut Events', endpoint="cutter"))
+admin.add_view(view.EventReleaseView(model.Event, db.session, name='Release', endpoint="release"))
 
 admin.add_view(view.AdminEventView(model.Event, db.session, category='Events', endpoint="events"))
 admin.add_view(view.AdminView(model.Conference, db.session, category='Events', endpoint="conferences"))
