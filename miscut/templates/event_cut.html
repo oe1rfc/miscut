@@ -61,12 +61,13 @@
                         <div class="panel-title"><b>current position:</b>
                             <button type="button" class="btn btn-success" @click="setSegmentStart"><span class="glyphicon glyphicon-play" aria-hidden="true"> set Start (i)</button>
                             <button type="button" class="btn btn-success" @click="setSegmentStop"><span class="glyphicon glyphicon-stop" aria-hidden="true"> set End (o)</button>
-                            <button type="button" class="btn btn-danger"  class="btn btn-success" @click="splitSegment"><span class="glyphicon glyphicon-pause" aria-hidden="true"> Split</button>
+                            <button type="button" class="btn btn-danger" @click="splitSegment"><span class="glyphicon glyphicon-pause" aria-hidden="true"> Split</button>
                         </div>
                     </div>
                     <div class="panel-heading">
                         <div class="panel-title">
-                            <button type="button" class="btn btn-success"  class="btn btn-success" @click="postData">Save Event</button>
+                            <button type="button" class="btn btn-success" @click="saveSegments(true)">Save and Render</button>
+                            <button type="button" class="btn btn-info" @click="saveSegments(false)">Save</button>
                         </div>
                     </div>
                 </div>
@@ -211,11 +212,12 @@ cutter = new Vue({
         },
     },
     methods: {
-        postData: function() {
+        saveSegments: function(render=false) {
+            data = {'render': render, 'segments': this.segments }
             $.ajax({
                 type: "POST",
                 url: "{{ get_url('.rest_segments') }}?id={{ event.id }}",
-                data: JSON.stringify(this.segments),
+                data: JSON.stringify(data),
                 contentType:"application/json; charset=utf-8",
                 dataType:"json",
                 success: function(data) {

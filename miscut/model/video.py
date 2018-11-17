@@ -120,10 +120,8 @@ def update_event_state_cutting(mapper, connection, segment):
     if has_intro and has_outro and has_footage:
         if not all_assigned:
             state = 'cutting'
-        else:
-            state = 'rendering'
-        connection.execute(
-                Event.__table__.update().
-                    where(Event.id==segment.event.id).
-                    values(state=state)
-        )
+            connection.execute(
+                    Event.__table__.update().
+                        where(Event.id==segment.event.id).
+                        values(state=state)
+            )

@@ -79,9 +79,11 @@ class EventCutView(LoginView):
 
         if request.method == 'POST':
             saved = request.get_json()
+            if 'segments' not in saved or 'render' not in saved:
+                abort(400)
             newversion = (event.version + 1)
             segments = []
-            for s in saved:
+            for s in saved['segments']:
                 videofile=VideoFile.query.filter_by(id=int(s['videofile_id'])).first()
                 segments.append(VideoSegment(
                     segment_id = int(s['segment_id'])+1,
@@ -95,7 +97,8 @@ class EventCutView(LoginView):
                     version = newversion,
                 ))
             event.version = newversion
-            event.state = 'rendering'
+            if saved['render'] is True:
+                event.state = 'rendering'
             for s in segments:
                 db.session.add(s)
             db.session.commit()
@@ -179,7 +182,7 @@ class FileAssignView(LoginView):
     can_view_details = False
     edit_template = 'file_assign.html'
 
-    column_exclude_list = ('startdate', 'storage_url', 'created_at', 'changed_at')
+    column_exclude_list = ('startdate', 'storage_url', 'created_at', 'changed_at', 'deleted', 'active')
     column_searchable_list = ('conference.name', 'conference.code', 'file_url', 'comment')
 
     def create_view(self):
