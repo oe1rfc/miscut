@@ -116,7 +116,7 @@ class ApiRenderingEvent(View):
             values = request.get_json()
 
         event = Event.query.filter_by(conference_id=conference.id, id=id).first()
-        return Response(json.dumps({'event_id': event.event_id, 'name': event.name, 'segments': event.dict_segments}), mimetype="application/json")
+        return Response(json.dumps({'event_id': event.event_id, 'name': event.name, 'translation': event.translation, 'segments': event.dict_segments}), mimetype="application/json")
 
 def register_views(app, url="/api/"):
     app.add_url_rule(url+'file/<conf>', view_func=ApiFile.as_view('apps_api_file'), methods=['GET','POST'])

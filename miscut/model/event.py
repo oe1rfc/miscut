@@ -32,6 +32,7 @@ class Event(db.Model):
     personnames = db.Column(db.UnicodeText, default=None)
     active = db.Column(db.Boolean(), nullable=False, default=True)
     record = db.Column(db.Boolean(), nullable=False, default=True)
+    translation = db.Column(db.Boolean(), nullable=False, default=False)
     date = db.Column(db.DateTime(), default=None)
     duration = db.Column(db.Integer, default=0)
     rendered_url = db.Column(db.Unicode(512), default=None)
