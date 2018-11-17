@@ -112,10 +112,17 @@ class ApiRenderingEvent(View):
         conference = Conference.query.filter_by(code = conf).first()
         if conference is None:
             return Response("no conference %s" % conf, mimetype="text/plain")
+        event = Event.query.filter_by(conference_id=conference.id, id=id).first()
+
         if request.method == 'POST':
             values = request.get_json()
+            if values and 'rendered_url' in values and event.state == 'rendering':
+                event.rendered_url = values['rendered_url']
+                event.state = 'checking'
+                db.session.commit()
+            else:
+                return(400)
 
-        event = Event.query.filter_by(conference_id=conference.id, id=id).first()
         return Response(json.dumps({'event_id': event.event_id, 'name': event.name, 'translation': event.translation, 'segments': event.dict_segments}), mimetype="application/json")
 
 def register_views(app, url="/api/"):
