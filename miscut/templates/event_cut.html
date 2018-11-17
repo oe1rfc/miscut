@@ -57,9 +57,9 @@
             </p>
             <p>
                 <div class="panel">
-                    <div class="panel-heading">
+                    <div class="panel-heading"  v-if="active_segment && active_segment.videofile.type == 'footage'">
                         <div class="panel-title"><b>current position:</b>
-                            <button type="button" class="btn btn-success" @click="setSegmentStart"><span class="glyphicon glyphicon-play" aria-hidden="true"> set Start (i)</button>
+                            <button type="button" class="btn btn-success"  @click="setSegmentStart"><span class="glyphicon glyphicon-play" aria-hidden="true"> set Start (i)</button>
                             <button type="button" class="btn btn-success" @click="setSegmentStop"><span class="glyphicon glyphicon-stop" aria-hidden="true"> set End (o)</button>
                             <button type="button" class="btn btn-danger" @click="splitSegment"><span class="glyphicon glyphicon-pause" aria-hidden="true"> Split</button>
                         </div>
@@ -120,6 +120,7 @@ database segments:
                     </thead>
                     <tr  v-for="item in segments"  v-bind:class="{ success: active_segment == item }" :key="item.segment_id">
                         <td>
+                            <a v-if="item.videofile.type != 'footage'" v-on:click="active_segment = item"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></a>
                             <a v-if="item.videofile.type == 'footage'" v-on:click="active_segment = item"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
                         </td>
                         <td>{{ item.segment_id }}</td>
@@ -226,7 +227,7 @@ cutter = new Vue({
             });
         },
         setSegmentStart: function(event) {
-            if(this.active_segment) {
+            if(this.active_segment && this.active_segment.videofile.type == 'footage' ) {
                 var end = this.active_segment.start + this.active_segment.length;
                 if (player.media.currentTime < end) {
                     this.active_segment.start = player.media.currentTime;
@@ -236,13 +237,13 @@ cutter = new Vue({
             }
         },
         setSegmentStop: function(event) {
-            if(this.active_segment && player.media.currentTime > this.active_segment.start) {
+            if(this.active_segment && this.active_segment.videofile.type == 'footage' && player.media.currentTime > this.active_segment.start) {
                 this.active_segment.length = player.media.currentTime - this.active_segment.start;
                 this.mediaplayerUpdate(this.active_segment);
             }
         },
         splitSegment: function(event) {
-            if(!this.active_segment || player.media.currentTime < this.active_segment.start ||
+            if(!this.active_segment || this.active_segment.videofile.type != 'footage' || player.media.currentTime < this.active_segment.start ||
                 player.media.currentTime > (this.active_segment.start + this.active_segment.length))
                     return;
             var i; var newsegment = Object.create(null);
@@ -268,8 +269,9 @@ cutter = new Vue({
             player.setmarkers(player.controls);
             if (updatesrc) {
                 player.setSrc(segment.videofile.proxy_url);
-                player.setCurrentTime(segment.start);
                 player.load();
+                player.setCurrentTime(segment.start);
+                player.play();
             }
         }
     }
@@ -295,8 +297,20 @@ $('#mediaplayer').mediaelementplayer({
 
 
 $.getJSON( "{{ get_url('.rest_segments') }}?id={{ event.id }}", function( data ) {
+    function sortSegments(a, b) {
+        if (a.videofile.type == 'intro')
+            return -1;
+        if (a.videofile.type == 'outro')
+            return 1;
+        return a.segment_id - b.segment_id;
+    }
+    // sort and renumber segments
+    segments = data.segments.sort(sortSegments)
+    for (i = 0, total = segments.length; i < total; ++i) {
+        segments[i].segment_id = i;
+    }
     cutter.active_segment = null;
-    cutter.segments = data.segments;
+    cutter.segments = segments;
     cutter.comment = data.comment;
     cutter.version = data.version;
 });
