@@ -184,6 +184,7 @@ class FileAssignView(LoginView):
 
     column_exclude_list = ('startdate', 'storage_url', 'created_at', 'changed_at', 'deleted', 'active')
     column_searchable_list = ('conference.name', 'conference.code', 'file_url', 'comment')
+    column_default_sort = ('file_url', False)
 
     def create_view(self):
         pass
