@@ -45,3 +45,4 @@ class SystemView(LoginView):
 
 from .admin import AdminSegmentView, AdminFileView, AdminEventView
 from .video import EventCutView, FileAssignView, EventReleaseView, EventOverView
+from .public import ReleasedEvents
