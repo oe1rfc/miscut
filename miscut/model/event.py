@@ -16,6 +16,7 @@ class Conference(db.Model):
     created_at = db.Column(db.DateTime(), default=datetime.utcnow)
     changed_at = db.Column(db.DateTime(), onupdate=datetime.utcnow)
     comment = db.Column(db.UnicodeText, default="")
+    schedulexml = db.Column(db.UnicodeText, default=None)
 
     def __str__(self):
         return self.code

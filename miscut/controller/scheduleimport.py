@@ -27,6 +27,7 @@ class ScheduleImport():
             print('download failed')
             return events
 
+        self.c.schedulexml = r.text.encode('utf-8')
         # parse into ElementTree
         schedule = ET.fromstring(r.text.encode('utf-8'))
 
