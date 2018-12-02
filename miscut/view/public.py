@@ -25,7 +25,7 @@ class ReleasedEvents(sqla.ModelView):
         pass
 
     def get_query(self):
-        return super(ReleasedEvents, self).get_query().filter(self.model.active == True, self.model.state == 'published', self.model.rendered_url != None)
+        return super(ReleasedEvents, self).get_query().filter(self.model.active == True, self.model.record == True, self.model.state == 'published', self.model.rendered_url != None)
 
     def get_count_query(self):
-        return self.session.query(func.count('*')).filter(self.model.active == True, self.model.state == 'published', self.model.rendered_url != None)
+        return self.session.query(func.count('*')).filter(self.model.active == True, self.model.record == True, self.model.state == 'published', self.model.rendered_url != None)
