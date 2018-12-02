@@ -2,6 +2,7 @@ from flask.views import View
 from flask import Response, json, request
 from ..model import db, Conference, Event, VideoFile, VideoSegment
 from miscut import app
+import xml.etree.ElementTree as ET
 
 def check_api_token(func):
    def func_wrapper(*args, **kwargs):
@@ -16,7 +17,7 @@ class ApiFile(View):
     def dispatch_request(self, conf):
         conference = Conference.query.filter_by(code = conf).first()
         if conference is None:
-            return Response("no conference %s" % conf, mimetype="text/plain")
+            return Response("no conference %s" % conf, mimetype="text/plain"), 404
 
         if request.method == 'POST':
             values = request.get_json()
@@ -42,7 +43,7 @@ class ApiFile(View):
     def dispatch_request(self, conf):
         conference = Conference.query.filter_by(code = conf).first()
         if conference is None:
-            return Response("no conference %s" % conf, mimetype="text/plain")
+            return Response("no conference %s" % conf, mimetype="text/plain"), 404
 
         if request.method == 'POST':
             values = request.get_json()
@@ -100,7 +101,7 @@ class ApiRenderingEvents(View):
     def dispatch_request(self, conf):
         conference = Conference.query.filter_by(code = conf).first()
         if conference is None:
-            return Response("no conference %s" % conf, mimetype="text/plain")
+            return Response("no conference %s" % conf, mimetype="text/plain"), 404
         events = []
         for f in Event.query.filter_by(conference_id=conference.id, state='rendering'):
             events.append(f.id)
@@ -111,7 +112,7 @@ class ApiRenderingEvent(View):
     def dispatch_request(self, conf=None, id=None):
         conference = Conference.query.filter_by(code = conf).first()
         if conference is None:
-            return Response("no conference %s" % conf, mimetype="text/plain")
+            return Response("no conference %s" % conf, mimetype="text/plain"), 404
         event = Event.query.filter_by(conference_id=conference.id, id=id).first()
 
         if request.method == 'POST':
@@ -125,8 +126,37 @@ class ApiRenderingEvent(View):
 
         return Response(json.dumps({'event_id': event.event_id, 'name': event.name, 'translation': event.translation, 'segments': event.dict_segments}), mimetype="application/json")
 
+
+class ScheduleXMLexport(View):
+    def dispatch_request(self, conf=None, id=None):
+        conference = Conference.query.filter_by(code = conf).first()
+        if conference is None:
+            return Response("no conference %s" % conf, mimetype="text/plain"), 404
+        try:
+            schedule = ET.fromstring(conference.schedulexml)
+            assert schedule is not None
+        except:
+            return Response("no schedule.xml for %s" % conf, mimetype="text/plain"), 404
+
+        to_be_deleted = {}
+        for room in schedule.iter('room'):
+            for event in room.iter('event'):
+                e = Event.query.filter_by(conference_id=conference.id, event_id=event.attrib['id']).first()
+                if e and e.active == True and e.state == 'published' and e.rendered_url and e.record == True:
+                    event.append(ET.Element('video_download_url'))
+                    event.find('video_download_url').text = e.rendered_url
+                else:
+                    to_be_deleted[event] = room
+
+        for event,room in to_be_deleted.items():
+            room.remove(event)
+
+        return Response(ET.tostring(schedule, encoding='utf8', method='xml'), mimetype='text/xml; charset=utf-8')
+
+
 def register_views(app, url="/api/"):
     app.add_url_rule(url+'file/<conf>', view_func=ApiFile.as_view('apps_api_file'), methods=['GET','POST'])
     app.add_url_rule(url+'rendering/<conf>', view_func=ApiRenderingEvents.as_view('apps_api_rendering'), methods=['GET'])
     app.add_url_rule(url+'rendering/<conf>/<id>', view_func=ApiRenderingEvent.as_view('apps_api_renderingevent'), methods=['GET','POST'])
+    app.add_url_rule(url+'<conf>/schedule.xml', view_func=ScheduleXMLexport.as_view('apps_api_schedulexml'), methods=['GET'])
 
