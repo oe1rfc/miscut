@@ -27,7 +27,7 @@ class ScheduleImport():
             print('download failed')
             return events
 
-        self.c.schedulexml = r.text.encode('utf-8')
+        self.c.schedulexml = r.text
         # parse into ElementTree
         schedule = ET.fromstring(r.text.encode('utf-8'))
 
@@ -87,8 +87,11 @@ class ScheduleImport():
                 event.room = data['room_id']
                 print("event room changed for '%s'." % event)
             if event.record != data['record']:
-                event.record = data['record']
-                print("event record changed for '%s'." % event)
+                if event.record == False:
+                    print("event record for %s changed to True, but will NOT update." % event)
+                else:
+                    event.record = data['record']
+                    print("event record changed to False for '%s'." % event)
 
             if desc_changed:
                 event.description_updated = datetime.utcnow()
