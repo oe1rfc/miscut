@@ -298,9 +298,9 @@ $('#mediaplayer').mediaelementplayer({
 
 $.getJSON( "{{ get_url('.rest_segments') }}?id={{ event.id }}", function( data ) {
     function sortSegments(a, b) {
-        if (a.videofile.type == 'intro')
+        if (a.videofile.type == 'intro' || b.videofile.type == 'outro')
             return -1;
-        if (a.videofile.type == 'outro')
+        if (a.videofile.type == 'outro' || b.videofile.type == 'intro')
             return 1;
         return a.segment_id - b.segment_id;
     }
