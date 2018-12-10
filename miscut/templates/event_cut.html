@@ -65,6 +65,9 @@
                             <button type="button" class="btn btn-success" @click="setSegmentStop"><span class="glyphicon glyphicon-stop" aria-hidden="true"> set End (o)</button>
                             <button type="button" class="btn btn-danger" @click="splitSegment"><span class="glyphicon glyphicon-pause" aria-hidden="true"> Split</button>
                         </div>
+                        <div class="panel-title"><b>video segment:</b>
+                            <button type="button" class="btn btn-danger" @click="active_segment.start=0;active_segment.length=0" ><span class="glyphicon glyphicon-remove" aria-hidden="true"> Disable</button>
+                        </div>
                     </div>
                     <div class="panel-heading">
                         <div class="panel-title">
