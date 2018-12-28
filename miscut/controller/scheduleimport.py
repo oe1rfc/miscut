@@ -7,15 +7,15 @@ import xml.etree.ElementTree as ET
 
 
 class ScheduleImport():
-    def __init__(self, conference):
+    def __init__(self, conference, roomname=False):
         self.c = conference
-        for k,e in self.fetch_events().items():
+        for k,e in self.fetch_events(roomname).items():
             self.update_event(e)
         db.session.commit()
 
     # taken from https://github.com/voc/auphonic-upload/blob/master/upload.py - thanks!
     # Download the Events-Schedule and parse all Events out of it. Yield a tupel for each Event
-    def fetch_events(self):
+    def fetch_events(self, roomname=False):
         print('downloading pentabarf schedule')
         # destination list of events
         events = {}
@@ -37,6 +37,9 @@ class ScheduleImport():
             for room in day.iter('room'):
                 # iterate events on that day in this room
                 for event in room.iter('event'):
+                    if roomname and event.find('room').text != roomname:
+                        print('ignoring room \'%s\'' % event.find('room').text)
+                        continue
                     # aggregate names of the persons holding this talk
                     personnames = []
                     for person in event.find('persons').iter('person'):

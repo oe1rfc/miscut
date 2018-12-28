@@ -12,7 +12,7 @@ class Conference(db.Model):
     code = db.Column(db.Unicode(16), nullable=False)
     name = db.Column(db.Unicode(64), nullable=False)
     active = db.Column(db.Boolean(), nullable=False, default=True)
-    scheduleurl = db.Column(db.Unicode(64), default=None)
+    scheduleurl = db.Column(db.Unicode(512), default=None)
     created_at = db.Column(db.DateTime(), default=datetime.utcnow)
     changed_at = db.Column(db.DateTime(), onupdate=datetime.utcnow)
     comment = db.Column(db.UnicodeText, default="")

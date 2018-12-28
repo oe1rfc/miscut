@@ -143,7 +143,8 @@ def createpw18():
 
 @app.cli.command()
 @click.option('--conference', '-c')
-def updateschedule(conference):
+@click.option('--room', '-r', default=False)
+def updateschedule(conference, room):
     if not conference:
         click.echo('missing -c <conferenceid>')
         return
@@ -154,5 +155,5 @@ def updateschedule(conference):
     if not conference.scheduleurl:
         click.echo('conference %s has no schedule url.' % conference)
         return
-    ScheduleImport(conference)
+    ScheduleImport(conference, room)
 
