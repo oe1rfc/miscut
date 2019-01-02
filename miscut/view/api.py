@@ -151,7 +151,7 @@ class ScheduleXMLexport(View):
         for event,room in to_be_deleted.items():
             room.remove(event)
 
-        return Response(ET.tostring(schedule, encoding='utf8', method='xml'), mimetype='text/xml; charset=utf-8')
+        return Response(ET.tostring(schedule, encoding='utf-8', method='xml'), mimetype='text/xml; charset=utf-8')
 
 
 def register_views(app, url="/api/"):
