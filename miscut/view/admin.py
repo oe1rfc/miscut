@@ -52,7 +52,7 @@ class AdminEventView(AdminView):
     can_view_details = True
     column_searchable_list = ('conference.name', 'event_id', 'name', 'subtitle', 'personnames')
     column_exclude_list = ('subtitle', 'duration', 'rendered_url', 'created_at', 'description_updated', 'changed_at')
-    column_editable_list = ('active', 'state', 'comment')
+    column_editable_list = ('active', 'state', 'comment', 'record')
     column_filters = ('conference.code', 'active', 'state', 'record', 'room')
 
     @action('deactivate', 'Deactivate', 'Are you sure you want to deactivate entries?')

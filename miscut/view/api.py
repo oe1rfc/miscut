@@ -145,6 +145,13 @@ class ScheduleXMLexport(View):
                 if e and e.active == True and e.state == 'published' and e.rendered_url and e.record == True:
                     event.append(ET.Element('video_download_url'))
                     event.find('video_download_url').text = e.rendered_url
+                    if e.translation:
+                        lang = event.find('language').text
+                        # we have no language information, if talk was not in de, translation was.
+                        if lang.startswith('de'):
+                            event.find('language').text = lang+"-en"
+                        else:
+                            event.find('language').text = lang+"-de"
                 else:
                     to_be_deleted[event] = room
 
