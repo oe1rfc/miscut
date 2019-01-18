@@ -165,7 +165,6 @@ class EventReleaseView(LoginView):
         return self.FileReleaseForm(data={'comment': obj.comment})
 
     def update_model(self, form, model):
-        print(request.form)
         if 'comment' in request.form:
             model.comment = request.form['comment']
         if '_set_recut' in request.form:
