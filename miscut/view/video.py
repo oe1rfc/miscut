@@ -74,6 +74,7 @@ class EventCutView(LoginView):
             return Response(json.dumps({
                     'version': event.version,
                     'comment': event.comment,
+                    'translation': event.translation,
                     'segments': event.dict_segments,
                 }), mimetype="application/json")
 
@@ -99,6 +100,10 @@ class EventCutView(LoginView):
             event.version = newversion
             if saved['render'] is True:
                 event.state = 'rendering'
+            if 'comment' in saved:
+                event.comment = saved['comment']
+            if 'translation' in saved and isinstance(saved['translation'], bool):
+                event.translation = saved['translation']
             for s in segments:
                 db.session.add(s)
             db.session.commit()

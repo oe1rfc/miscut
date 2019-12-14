@@ -54,9 +54,9 @@ def security_context_processor():
     )
 
 admin.add_view(view.EventOverView(model.Event, db.session, name='Status', endpoint="status"))
-admin.add_view(view.FileAssignView(model.VideoFile, db.session, name='Assign Files', endpoint="assignfiles"))
-admin.add_view(view.EventCutView(model.Event, db.session, name='Cut Events', endpoint="cutter"))
-admin.add_view(view.EventReleaseView(model.Event, db.session, name='Release', endpoint="release"))
+admin.add_view(view.FileAssignView(model.VideoFile, db.session, name='Assign Files', endpoint="assignfiles", menu_icon_type='glyph', menu_icon_value='glyphicon-film'))
+admin.add_view(view.EventCutView(model.Event, db.session, name='Cut Events', endpoint="cutter", menu_icon_type='glyph', menu_icon_value='glyphicon-scissors'))
+admin.add_view(view.EventReleaseView(model.Event, db.session, name='Release', endpoint="release", menu_icon_type='glyph', menu_icon_value='glyphicon-send'))
 
 admin.add_view(view.ReleasedEvents(model.Event, db.session, name='Released Videos', endpoint="videos"))
 

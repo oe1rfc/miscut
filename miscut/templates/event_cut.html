@@ -71,6 +71,12 @@
                     </div>
                     <div class="panel-heading">
                         <div class="panel-title">
+                            Comment: <input class="form-control" id="comment" name="comment" type="text" v-model="comment">
+                        </div>
+                    </div>
+                    <div class="panel-heading">
+                        <div class="panel-title"><b>Translation:</b>
+                            <input id="translation" name="translation" type="checkbox" v-model="translation">&nbsp;&nbsp;
                             <button type="button" class="btn btn-success" @click="saveSegments(true)">Save and Render</button>
                             <button type="button" class="btn btn-info" @click="saveSegments(false)">Save</button>
                         </div>
@@ -149,6 +155,9 @@ $(window).resize(function(){
 
 
 $(document).keydown(function(e) {
+    if (e.target.type == 'text') {
+        return;
+    }
     console.log(e, e.which);
     switch(e.which) {
         case 73: // i
@@ -192,6 +201,7 @@ cutter = new Vue({
         active_segment: null,
         segments: null,
         comment: null,
+        translation: null,
     },
     watch: {
         segments: function (newval, oldval) {
@@ -212,7 +222,11 @@ cutter = new Vue({
     },
     methods: {
         saveSegments: function(render=false) {
-            data = {'render': render, 'segments': this.segments }
+            data = {'render': render,
+                    'segments': this.segments,
+                    'comment': this.comment,
+                    'translation': this.translation,
+            }
             $.ajax({
                 type: "POST",
                 url: "{{ get_url('.rest_segments') }}?id={{ event.id }}",
@@ -316,6 +330,7 @@ $.getJSON( "{{ get_url('.rest_segments') }}?id={{ event.id }}", function( data )
     cutter.segments = segments;
     cutter.comment = data.comment;
     cutter.version = data.version;
+    cutter.translation = data.translation;
 });
 
 </script>
