@@ -19,7 +19,7 @@
 <style>
 </style>
 {{ super() }}
-<div class="container" id="cutter-container">
+<div id="cutter-container">
     <div class="row" >
         <div class="col-sm-10">
             <p class="lead">{{ event }}</p>
@@ -49,33 +49,36 @@
                 <video style="max-width: 100%;" id='mediaplayer' controls="controls" preload="none" ></video>
             </div>
             <p>
-                <div class="progress" style="border-radius: 2px">
-                    <div v-if="active_segment" class="progress-bar progress-bar-warning" role="progressbar" v-bind:style="{ width: 98.4*(active_segment.start/active_segment.videofile.length) + '%' }">{{ active_segment.start.toFixed(2)  }}s</div>
-                    <a @click="playerSeek(active_segment.start - 3)" v-if="active_segment" class="progress-bar progress-bar-danger" role="progressbar" style="width: 0.8%; cursor: pointer"></a>
-                    <div v-if="active_segment" class="progress-bar progress-bar-success" role="progressbar" v-bind:style="{ width: 98.4*(active_segment.length/active_segment.videofile.length) + '%' }">{{ active_segment.length.toFixed(2)  }}s</div>
-                    <a @click="playerSeek(active_segment.start + active_segment.length - 3)" v-if="active_segment" class="progress-bar progress-bar-danger" role="progressbar" style="width: 0.8%; cursor: pointer"></a>
-                    <div v-if="active_segment" class="progress-bar progress-bar-warning" role="progressbar" v-bind:style="{ width: 98.4*((active_segment.videofile.length-active_segment.start-active_segment.length)/active_segment.videofile.length) + '%' }"></div>
-                </div>
-            </p>
-            <p>
                 <div class="panel">
+                    <p>
+                        <div class="progress" style="border-radius: 2px">
+                            <div v-if="active_segment" class="progress-bar progress-bar-warning" role="progressbar" v-bind:style="{ width: 98.4*(active_segment.start/active_segment.videofile.length) + '%' }">{{ active_segment.start.toFixed(2)  }}s</div>
+                            <a @click="playerSeek(active_segment.start - 3)" v-if="active_segment" class="progress-bar progress-bar-danger" role="progressbar" style="width: 0.8%; cursor: pointer"></a>
+                            <div v-if="active_segment" class="progress-bar progress-bar-success" role="progressbar" v-bind:style="{ width: 98.4*(active_segment.length/active_segment.videofile.length) + '%' }">{{ active_segment.length.toFixed(2)  }}s</div>
+                            <a @click="playerSeek(active_segment.start + active_segment.length - 3)" v-if="active_segment" class="progress-bar progress-bar-danger" role="progressbar" style="width: 0.8%; cursor: pointer"></a>
+                            <div v-if="active_segment" class="progress-bar progress-bar-warning" role="progressbar" v-bind:style="{ width: 98.4*((active_segment.videofile.length-active_segment.start-active_segment.length)/active_segment.videofile.length) + '%' }"></div>
+                        </div>
+                    </p>
                     <div class="panel-heading"  v-if="active_segment && active_segment.videofile.type == 'footage'">
                         <div class="panel-title"><b>current position:</b>
                             <button type="button" class="btn btn-success"  @click="setSegmentStart"><span class="glyphicon glyphicon-play" aria-hidden="true"> set Start (i)</button>
                             <button type="button" class="btn btn-success" @click="setSegmentStop"><span class="glyphicon glyphicon-stop" aria-hidden="true"> set End (o)</button>
                             <button type="button" class="btn btn-danger" @click="splitSegment"><span class="glyphicon glyphicon-pause" aria-hidden="true"> Split</button>
                         </div>
+                        <hr />
                         <div class="panel-title"><b>video segment:</b>
                             <button type="button" class="btn btn-danger" @click="active_segment.start=0;active_segment.length=0" ><span class="glyphicon glyphicon-remove" aria-hidden="true"> Disable</button>
                         </div>
                     </div>
+                </div>
+                <div class="panel">
                     <div class="panel-heading">
                         <div class="panel-title">
                             Comment: <input class="form-control" id="comment" name="comment" type="text" v-model="comment">
                         </div>
                     </div>
                     <div class="panel-heading">
-                        <div class="panel-title"><b>Translation:</b>
+                        <div class="panel-title"><b>has translation:</b>
                             <input id="translation" name="translation" type="checkbox" v-model="translation">&nbsp;&nbsp;
                             <button type="button" class="btn btn-success" @click="saveSegments(true)">Save and Render</button>
                             <button type="button" class="btn btn-info" @click="saveSegments(false)">Save</button>
