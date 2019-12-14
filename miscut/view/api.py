@@ -103,8 +103,9 @@ class ApiRenderingEvents(View):
         if conference is None:
             return Response("no conference %s" % conf, mimetype="text/plain"), 404
         events = []
-        for f in Event.query.filter_by(conference_id=conference.id, state='rendering'):
-            events.append(f.id)
+        for f in Event.query.filter_by(conference_id=conference.id):
+            if f.state=='rendering':
+                events.append(f.id)
         return Response(json.dumps(events), mimetype="application/json")
 
 class ApiRenderingEvent(View):
@@ -117,9 +118,10 @@ class ApiRenderingEvent(View):
 
         if request.method == 'POST':
             values = request.get_json()
-            if values and 'rendered_url' in values and event.state == 'rendering':
+            if values and 'rendered_url' in values:
                 event.rendered_url = values['rendered_url']
-                event.state = 'checking'
+                if event.state == 'rendering':
+                    event.state = 'checking'
                 db.session.commit()
             else:
                 return(400)
