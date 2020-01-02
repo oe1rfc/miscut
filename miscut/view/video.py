@@ -243,14 +243,17 @@ class FileAssignView(LoginView):
         assign_events = AjaxSelectMultipleField(loader=None)
         comment = StringField('File Comment')
 
+    class EventAjaxModelLoader(QueryAjaxModelLoader):
+        def get_query(self):
+            return self.session.query(self.model).filter(self.model.conference_id == int(self.name))
+
     def get_event_loader(self, conference_id):
-        return QueryAjaxModelLoader(
+        return self.EventAjaxModelLoader(
             conference_id,
             db.session, Event,
             fields=['name', 'personnames'],
             page_size=10,
-            placeholder="Search for Events",
-            filters = (Event.conference_id == conference_id)
+            placeholder="Search for Events (Remember: there might be multiple!)"
         )
 
     def edit_form(self, obj=None):
