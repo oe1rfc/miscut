@@ -20,8 +20,9 @@ class EventCutView(LoginView):
     can_delete = False
     can_create = False
     can_view_details = False
-    column_exclude_list = ('subtitle', 'duration', 'rendered_url', 'created_at', 'description_updated', 'changed_at')
+    column_exclude_list = ('subtitle', 'duration', 'rendered_url', 'created_at', 'description_updated', 'changed_at', 'active', 'state', 'date')
     column_searchable_list = ('conference.name', 'event_id', 'name', 'subtitle', 'personnames', 'comment')
+    column_filters = ('conference.code', 'room', 'record')
 
     def create_view(self):
         pass
@@ -135,8 +136,9 @@ class EventReleaseView(LoginView):
     can_create = False
     can_view_details = False
     edit_template = 'event_release.html'
-    column_exclude_list = ('subtitle', 'duration', 'rendered_url', 'created_at', 'description_updated', 'changed_at')
+    column_exclude_list = ('subtitle', 'duration', 'rendered_url', 'created_at', 'description_updated', 'changed_at', 'active', 'state', 'version', 'date')
     column_searchable_list = ('conference.name', 'event_id', 'name', 'subtitle', 'personnames', 'comment')
+    column_filters = ('conference.code', 'room', 'record')
 
     def create_view(self):
         pass
@@ -281,7 +283,7 @@ class EventOverView(LoginView):
     can_create = False
     can_edit = False
     can_view_details = False
-    column_exclude_list = ('subtitle', 'duration', 'rendered_url', 'created_at', 'description_updated', 'changed_at')
+    column_exclude_list = ('subtitle', 'duration', 'rendered_url', 'created_at', 'description_updated', 'changed_at', 'version', 'active')
     column_searchable_list = ('conference.name', 'event_id', 'name', 'subtitle', 'personnames', 'comment')
     column_filters = ('conference.code', 'state', 'room', 'record')
     column_default_sort = ('changed_at', True)
