@@ -184,12 +184,15 @@ $(document).keydown(function(e) {
         case 37: // left
             player.setCurrentTime(player.media.currentTime-0.04);
             e.preventDefault();
+            break;
         case 39: // right
             player.setCurrentTime(player.media.currentTime+0.04);
             e.preventDefault();
+            break;
         case 33: // page up
             player.setCurrentTime(player.media.currentTime-1.00);
             e.preventDefault();
+            break;
         case 34: // page down
             player.setCurrentTime(player.media.currentTime+1.00);
             e.preventDefault();
