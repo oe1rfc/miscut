@@ -247,7 +247,11 @@ class FileAssignView(LoginView):
 
     class EventAjaxModelLoader(QueryAjaxModelLoader):
         def get_query(self):
-            return self.session.query(self.model).filter(self.model.conference_id == int(self.name))
+            return self.session.query(self.model).filter(
+                self.model.active==True,
+                self.model.conference_id == int(self.name),
+                self.model.state.in_(['stub','cutting', 'source', 'problem'])
+                )
 
     def get_event_loader(self, conference_id):
         return self.EventAjaxModelLoader(
