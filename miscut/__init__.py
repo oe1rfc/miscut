@@ -61,7 +61,7 @@ admin.add_view(view.EventReleaseView(model.Event, db.session, name='Release', en
 admin.add_view(view.ReleasedEvents(model.Event, db.session, name='Released Videos', endpoint="videos"))
 
 admin.add_view(view.AdminEventView(model.Event, db.session, category='Events', endpoint="events"))
-admin.add_view(view.AdminView(model.Conference, db.session, category='Events', endpoint="conferences"))
+admin.add_view(view.AdminConferenceView(model.Conference, db.session, category='Events', endpoint="conferences"))
 
 admin.add_view(view.AdminFileView(model.VideoFile, db.session, category='Files', endpoint="files"))
 admin.add_view(view.AdminSegmentView(model.VideoSegment, db.session, category='Files', endpoint="segments"))

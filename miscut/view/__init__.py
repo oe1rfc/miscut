@@ -43,6 +43,6 @@ class SystemView(LoginView):
             return True
         return super(SystemView, self).is_accessible()
 
-from .admin import AdminSegmentView, AdminFileView, AdminEventView
+from .admin import AdminSegmentView, AdminFileView, AdminEventView, AdminConferenceView
 from .video import EventCutView, FileAssignView, EventReleaseView, EventOverView
 from .public import ReleasedEvents

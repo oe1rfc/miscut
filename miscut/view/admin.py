@@ -48,6 +48,10 @@ class AdminFileView(AdminView):
             flash(gettext('Failed: %(error)s', error=str(ex)), 'error')
 
 
+class AdminConferenceView(AdminView):
+    column_exclude_list = ('schedulexml', )
+    column_editable_list = ('active', )
+
 class AdminEventView(AdminView):
     can_view_details = True
     column_searchable_list = ('conference.name', 'event_id', 'name', 'subtitle', 'personnames')
